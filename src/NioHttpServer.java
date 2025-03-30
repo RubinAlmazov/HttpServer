@@ -19,6 +19,23 @@ public class NioHttpServer {
 
 
 
-
+        while (true) {
+            selector.select();
+            for (SelectionKey key : selector.selectedKeys()) {
+                if (key.isAcceptable()) accept(selector, serverSocket);
+            }
+            selector.selectedKeys().clear();
+        }
     }
+
+    public static void accept(Selector selector, ServerSocketChannel serverSocket) throws IOException{
+        SocketChannel client = serverSocket.accept();
+        client.configureBlocking(false);
+        client.register(selector, SelectionKey.OP_READ);
+        System.out.println("New connection: " + client.getRemoteAddress());
+    }
+
+
+
+
 }
